@@ -34,6 +34,13 @@ def deanonymize(data):
     )
     return response.status_code, response.content
 
+def genz(data):
+    response = requests.post(
+        f"{ANONYMIZER_BASE_URL}/genz", data=data, headers=DEFAULT_HEADERS
+    )
+    return response.status_code, response.content
+
+
 def __get_redact_payload(color_fill):
     payload = {}
     if color_fill:
@@ -51,11 +58,5 @@ def __get_multipart_form_data(file):
 
 
 def call_genz_anonymizer(data):
-    """Helper to call the /genz endpoint."""
-    response = requests.post(
-        f"{ANONYMIZER_BASE_URL}/genz",
-        data=data,
-        headers=DEFAULT_HEADERS,
-    )
-    return response.status_code, response.content
+    return genz(data)
 

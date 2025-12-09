@@ -3,7 +3,7 @@ import json
 import pytest
 
 from common.assertions import equal_json_strings
-from common.methods import anonymize, anonymizers, deanonymize, call_genz_anonymizer
+from common.methods import anonymize, anonymizers, deanonymize, genz
 
 
 @pytest.mark.api
@@ -424,10 +424,10 @@ def test_given_anonymize_called_with_genz_then_expected_valid_response_returned(
     }
     """
 
-    status_code, response_content = call_genz_anonymizer(request_body)
+    response_status, response_content = genz(request_body)
 
     # Because the Gen-Z output is random, we only check status + structure.
-    assert status_code == 200
+    assert response_status == 200
 
     response = json.loads(response_content)
 
