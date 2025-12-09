@@ -85,20 +85,16 @@ class Server:
             return Response(
                 deanonymized_response.to_json(), mimetype="application/json"
             )
-        
         @self.app.route("/genz", methods=["POST"])
         def genz() -> Response:
             """Apply the Gen-Z anonymizer to the provided entities."""
             content = request.get_json()
             if not content:
                 raise BadRequest("Invalid request json")
-            
             text = content.get("text", "")
             analyzer_results_json = content.get("analyzer_results")
             if analyzer_results_json is None:
                 raise BadRequest("Missing 'analyzer_results' in request body")
-            
-            # Convert JSON to RecognizerResult objects
             analyzer_results = AppEntitiesConvertor.analyzer_results_from_json(
                 analyzer_results_json
             )
@@ -117,8 +113,6 @@ class Server:
             )
 
             return Response(genz_result.to_json(), mimetype="application/json")
-        
-
         @self.app.route("/anonymizers", methods=["GET"])
         def anonymizers():
             """Return a list of supported anonymizers."""
@@ -134,7 +128,6 @@ class Server:
             """Return an example Gen-Z anonymization output."""
             example_text = "Call Emily at 577-988-1234"
             example_output = "Call GOAT at vibe check"
-
             response_body = {
                 "example": example_text,
                 "example_output": example_output,
