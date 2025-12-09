@@ -7,7 +7,7 @@ from pathlib import Path
 
 from flask import Flask, Response, jsonify, request
 from presidio_anonymizer import AnonymizerEngine, DeanonymizeEngine
-from presidio_anonymizer.entities import InvalidParamError
+from presidio_anonymizer.entities import InvalidParamError, OperatorConfig
 from presidio_anonymizer.services.app_entities_convertor import AppEntitiesConvertor
 from werkzeug.exceptions import BadRequest, HTTPException
 
@@ -85,6 +85,38 @@ class Server:
             return Response(
                 deanonymized_response.to_json(), mimetype="application/json"
             )
+        
+        @self.app.route("/genz", methods=["POST"])
+        def genz() -> Response:
+            """Apply the Gen-Z anonymizer to the provided entities."""
+            content = request.get_json()
+            if not content:
+                raise BadRequest("Invalid request json")
+            
+            text = content.get("text", "")
+            analyzer_results_json = content.get("analyzer_results")
+            if analyzer_results_json is None:
+                raise BadRequest("Missing 'analyzer_results' in request body")
+            
+            # Convert JSON to RecognizerResult objects
+            analyzer_results = AppEntitiesConvertor.analyzer_results_from_json(
+                analyzer_results_json
+            )
+
+            # Build operators config: for every entity_type, use the 'genz' operator
+            entity_types = {result.entity_type for result in analyzer_results}
+            operators = {
+                entity_type: OperatorConfig("genz", {})
+                for entity_type in entity_types
+            }
+
+            genz_result = self.anonymizer.anonymize(
+                text=text,
+                analyzer_results=analyzer_results,
+                operators=operators,
+            )
+
+            return Response(genz_result.to_json(), mimetype="application/json")
         
 
         @self.app.route("/anonymizers", methods=["GET"])
