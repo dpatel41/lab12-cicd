@@ -129,7 +129,7 @@ class Server:
             example_output = "Call GOAT at vibe check"
             response_body = {
                 "example": example_text,
-                "example_output": example_output,
+                "example output": example_output,
                 "description": "Example output of the genz anonymizer.",
             }
 
