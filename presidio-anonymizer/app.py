@@ -122,7 +122,6 @@ class Server:
         def deanonymizers():
             """Return a list of supported deanonymizers."""
             return jsonify(self.deanonymize.get_deanonymizers())
-        
         @self.app.route("/genz-preview", methods=["GET"])
         def genz_preview():
             """Return an example Gen-Z anonymization output."""
